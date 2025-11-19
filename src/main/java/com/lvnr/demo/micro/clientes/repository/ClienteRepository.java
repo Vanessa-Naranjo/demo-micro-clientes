@@ -12,6 +12,6 @@ public interface ClienteRepository extends JpaRepository<ClienteEntity, Integer>
 
 	boolean existsByCodigoCliente(Integer CodigoCliente);
 
-	boolean deleteByCodigoCliente(Integer CodigoCliente);
+	void deleteByCodigoCliente(Integer CodigoCliente);
 	
 }

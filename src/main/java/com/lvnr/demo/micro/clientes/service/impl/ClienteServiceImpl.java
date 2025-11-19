@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.lvnr.demo.micro.clientes.dto.ClienteDto;
 import com.lvnr.demo.micro.clientes.entity.ClienteEntity;
@@ -26,8 +27,8 @@ public class ClienteServiceImpl implements ClienteService {
 		clienteEntity.setCodigoCliente(clienteDto.getCodigoCliente());
 		if (!clienteRepository.existsByCodigoCliente(clienteDto.getCodigoCliente())) {
 			clienteRepository.save(clienteEntity);
-		}else {
-			throw new IllegalArgumentException("El cliente ya existe: " +clienteDto.getCodigoCliente());
+		} else {
+			throw new IllegalArgumentException("El cliente ya existe: " + clienteDto.getCodigoCliente());
 		}
 		return clienteDto;
 	}
@@ -68,12 +69,18 @@ public class ClienteServiceImpl implements ClienteService {
 		clienteEntity.setPrimerApellido(clienteDto.getPrimerApellido());
 		clienteEntity.setSegundoApellido(clienteDto.getSegundoApellido());
 		clienteEntity.setCodigoCliente(clienteDto.getCodigoCliente());
+		if (codigoCliente != clienteDto.getCodigoCliente()) {
+			if (this.clienteRepository.existsByCodigoCliente(clienteDto.getCodigoCliente())) {
+				throw new IllegalArgumentException("El codigo del cliente ya existe: " + clienteDto.getCodigoCliente());
+			}
+		}
 		clienteRepository.save(clienteEntity);
 
 		return clienteDto;
 	}
 
 	@Override
+	@Transactional
 	public String eliminarCliente(Integer codigoCliente) {
 		if (this.clienteRepository.existsByCodigoCliente(codigoCliente)) {
 			this.clienteRepository.deleteByCodigoCliente(codigoCliente);
